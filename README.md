@@ -1,35 +1,13 @@
-# mbed-BLE-Mouse
-### BLE Mouse library for Arduino boards with BLE support and mbed OS.
+# mbed-BLE-HID
+### BLE HID library for Arduino boards with BLE support and mbed OS.
 This library turns Arduino Board into a BLE Mouse which can be connected to devices such as Windows PC, android phones etc.
-This library is completely written using Mbed OS's BLE API and also supports pairing with the Central device.
+This library is mostly written using Mbed OS's BLE API and also supports pairing with the Central device.
 
 ## Usage
-This library is similar to the Arduino's Mouse library and supports all the functions which are in the mouse library.
+This library is similar to the Arduino's Mouse, keyboard library and supports all the functions which are in those libraries.
 It also has additional features such as setDeviceName, setManufacturerName and setBatteryLevel.
 ```
-#include <HIDMouse.h>
-
-HIDMouse bleMouse;
-
-void setup() {
-
-  pinMode(LED_BUILTIN, OUTPUT);
-  bleMouse.setDeviceName("Device");
-  bleMouse.setManufacturerName("Manufacturer");
-  bleMouse.setBatteryLevel(75);
-  bleMouse.begin();
-}
-
-void loop() {
-  while(bleMouse.isConnected()) {
-  digitalWrite(LED_BUILTIN, HIGH);
-  bleMouse.move(0,0,1);
-  delay(1000);
-  }
-  
-  digitalWrite(LED_BUILTIN, LOW);
- }
- ```
+Some items are still pending TODO
  
  ## Compatible Hardware
  - Arduino Nano BLE
@@ -46,7 +24,7 @@ void loop() {
 
 ```sh
 cd ~/Documents/Arduino/libraries/
-git clone https://github.com/csash7/mbed-BLE-Mouse
+git clone https://github.com/csash7/mbed-BLE-HID
 ```
 
 ## Examples
