@@ -169,10 +169,16 @@ HID_information_t* HIDServiceBase::HIDInformation() {
     return &info;
 }
 
-ble_error_t HIDServiceBase::send(const report_t report) {
+ble_error_t HIDServiceBase::send(const report_t report, uint8_t reportLength) {
     return ble.gattServer().write(inputReportCharacteristic.getValueHandle(),
                                   report,
-                                  inputReportLength);
+                                  reportLength);
+}
+
+ble_error_t HIDServiceBase::sendMap(const report_t reportMap2, uint8_t reportMapLength2){
+    return ble.gattServer().write(reportMapCharacteristic.getValueHandle(), 
+                                  reportMap2,
+                                  reportMapLength2);
 }
 
 ble_error_t HIDServiceBase::read(report_t report) {

@@ -76,7 +76,9 @@ public:
      *  @note Don't call send() directly for multiple reports! Use reportTicker for that, in order
      *  to avoid overloading the BLE stack, and let it handle events between each report.
      */
-    virtual ble_error_t send(const report_t report);
+    virtual ble_error_t send(const report_t report, uint8_t reportLength);
+
+    virtual ble_error_t sendMap(const report_t reportMap2, uint8_t reportMapLength2);
 
     /**
      *  Read Report
@@ -108,6 +110,7 @@ protected:
      * Create the HID information structure
      */
     HID_information_t* HIDInformation();
+
 
 protected:
     BLE &ble;

@@ -3,10 +3,10 @@ Boards: Arduino Nano BLE, Arduino Nano BLE Sense (Any boards with Mbed OS and BL
 This example turns the board into a BLE mouse
 whose mouse movements is controlled using IMU sensor onbaord.
 */
-#include <HIDMouse.h>
+#include <BLEMouse.h>
 #include <Arduino_LSM9DS1.h>
 
-HIDMouse bleMouse;
+BLEMouse bleMouse;
 
 void setup() {
 

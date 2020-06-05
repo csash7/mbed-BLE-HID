@@ -4,10 +4,10 @@
 #include "ble/Gap.h"
 #include "SecurityManager.h"
 #include "events/mbed_events.h"
-#include "BLE_HID/HIDServiceBase.h"
+#include "HIDServiceBase.h"
 #include "ble/services/BatteryService.h"
-#include "BLE_HID/BLEDeviceInformationService.h"
-#include "BLEDevice.h"
+#include "HIDDeviceInformationService.h"
+#include "HIDDevice.h"
 
 /**
  * This program implements a complete HID-over-Gatt Profile:
@@ -26,11 +26,11 @@ rtos::Thread t;
 typedef ble_error_t (Gap::*disconnect_call_t)(ble::connection_handle_t, ble::local_disconnection_reason_t);
 const static disconnect_call_t disconnect_call = &Gap::disconnect;
 
-void BLEDevice::schedule_ble_events(BLE::OnEventsToProcessCallbackContext *context) {
+void HIDDevice::schedule_ble_events(BLE::OnEventsToProcessCallbackContext *context) {
     _event_queue.call(mbed::Callback<void()>(&context->ble, &BLE::processEvents));
 }
 
-BLEDevice::BLEDevice(BLEKeyboard keyboard, BLE &ble): 
+HIDDevice::HIDDevice(BLE &ble, ble::adv_data_appearance_t appearance): 
     _battery_level(50),
     device_name("Example"),
     manufacturersName("ARM"),
@@ -39,55 +39,42 @@ BLEDevice::BLEDevice(BLEKeyboard keyboard, BLE &ble):
     _battery_uuid(GattService::UUID_BATTERY_SERVICE),
     _battery_service(_ble, _battery_level),
     _handle(0),
-    hid_device(1),
+    appearance2(appearance),
     _adv_data_builder(_adv_buffer),
      ifconnected(false){
      }
-BLEDevice::BLEDevice(BLEMouse mouse, BLE &ble):
-    _battery_level(50),
-    device_name("Example"),
-    manufacturersName("ARM"),
-    _ble(ble),
-    _event_queue(event_queue),
-    _battery_uuid(GattService::UUID_BATTERY_SERVICE),
-    _battery_service(_ble, _battery_level),
-    _handle(0),
-    hid_device(2),
-    _adv_data_builder(_adv_buffer),
-     ifconnected(false)
-{}
 
-    void BLEDevice::start(){
+    void HIDDevice::start(){
         _ble.onEventsToProcess(
-            makeFunctionPointer(this, &BLEDevice::schedule_ble_events)
+            makeFunctionPointer(this, &HIDDevice::schedule_ble_events)
         );
 
         _ble.securityManager().setSecurityManagerEventHandler(this);
         _ble.gap().setEventHandler(this);
-        _ble.init(this, &BLEDevice::on_init_complete);
+        _ble.init(this, &HIDDevice::on_init_complete);
 		t.start(mbed::callback(&_event_queue, &events::EventQueue::dispatch_forever));
 
     }
 	
  
-    bool BLEDevice::isConnected(){
+    bool HIDDevice::isConnected(){
         return ifconnected;
     }
     
 
-    void BLEDevice::setManufacturerName(const char *manufacturersName2){
+    void HIDDevice::setManufacturerName(const char *manufacturersName2){
         manufacturersName = manufacturersName2;
     }
 
-    void BLEDevice::setDeviceName(const char *device_name2){
+    void HIDDevice::setDeviceName(const char *device_name2){
         device_name = device_name2;
     }
 
-    void BLEDevice::setBatteryLevel(uint8_t _battery_level){
+    void HIDDevice::setBatteryLevel(uint8_t _battery_level){
         _battery_service.updateBatteryLevel(_battery_level);
     }
 
-    void BLEDevice::on_init_complete(BLE::InitializationCompleteCallbackContext *params){
+    void HIDDevice::on_init_complete(BLE::InitializationCompleteCallbackContext *params){
         if (params->error != BLE_ERROR_NONE) {
             return;
         }
@@ -127,11 +114,11 @@ BLEDevice::BLEDevice(BLEMouse mouse, BLE &ble):
     pnpID.vendorID = 0x0D28; // NXP
     pnpID.productID = 0x0204; // CMSIS-DAP (well, it's a keyboard but oh well)
     pnpID.productVersion = 0x0100; // v1.0
-    BLEDeviceInformationService deviceInfo(ble, manufacturersName, "m1", "abc", "def", "ghi", "jkl", &pnpID);
+    HIDDeviceInformationService deviceInfo(ble, manufacturersName, "m1", "abc", "def", "ghi", "jkl", &pnpID);
 
 }
 
-    void BLEDevice::start_advertising(){
+    void HIDDevice::start_advertising(){
 
         ble::AdvertisingParameters adv_parameters(
             ble::advertising_type_t::CONNECTABLE_UNDIRECTED,
@@ -143,13 +130,7 @@ BLEDevice::BLEDevice(BLEMouse mouse, BLE &ble):
 
         _adv_data_builder.setFlags();
         _adv_data_builder.setName(device_name);
-        if(hid_device == 1){
-        _adv_data_builder.setAppearance(ble::adv_data_appearance_t::KEYBOARD);
-        }
-        else if(hid_device == 2){
-        _adv_data_builder.setAppearance(ble::adv_data_appearance_t::MOUSE);
-        }
-        
+        _adv_data_builder.setAppearance(appearance2);
       _adv_data_builder.setLocalServiceList(mbed::make_Span(&_battery_uuid, 1));
         
     
@@ -187,13 +168,13 @@ BLEDevice::BLEDevice(BLEMouse mouse, BLE &ble):
     }
 
 
-    void BLEDevice::onDisconnectionComplete(const ble::DisconnectionCompleteEvent&) {
+    void HIDDevice::onDisconnectionComplete(const ble::DisconnectionCompleteEvent&) {
         ifconnected = false;
         _ble.gap().startAdvertising(ble::LEGACY_ADVERTISING_HANDLE);
 		_ble.securityManager().setPairingRequestAuthorisation(false);
     }
 
-    void BLEDevice::onConnectionComplete(const ble::ConnectionCompleteEvent &event) {
+    void HIDDevice::onConnectionComplete(const ble::ConnectionCompleteEvent &event) {
         ifconnected = true;
 
         ble_error_t error;
@@ -214,14 +195,14 @@ BLEDevice::BLEDevice(BLEMouse mouse, BLE &ble):
 
 
 
-     void BLEDevice::pairingRequest(
+     void HIDDevice::pairingRequest(
         ble::connection_handle_t connectionHandle
     ) {
         //printf("Pairing requested - authorising\r\n");
         _ble.securityManager().acceptPairingRequest(connectionHandle);
     }
 
-        void BLEDevice::pairingResult(
+        void HIDDevice::pairingResult(
         ble::connection_handle_t connectionHandle,
         SecurityManager::SecurityCompletionStatus_t result
     ) {
@@ -233,8 +214,9 @@ BLEDevice::BLEDevice(BLEMouse mouse, BLE &ble):
     }
 
 
-void BLEDevice::begin()
-{
-    BLEDevice::start();
+void HIDDevice::begin()
+{   
+if(!_ble.hasInitialized())
+   HIDDevice::start();
 }
 

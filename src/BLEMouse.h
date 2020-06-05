@@ -1,6 +1,6 @@
 #include "mbed.h"
-
-#include "HIDServiceBase.h"
+#include "BLE_HID/HIDDevice.h"
+#include "BLE_HID/HIDServiceBase.h"
 
 #define MOUSE_BUTTON_LEFT    0x01
 #define MOUSE_BUTTON_RIGHT   0x02
@@ -36,10 +36,11 @@ report_map_t MOUSE_REPORT_MAP = {
     END_COLLECTION(0),
 };
 
-class BLEMouse : public HIDServiceBase
+class BLEMouse : public HIDServiceBase, 
+                 public HIDDevice
 {
     public:
-    BLEMouse(BLE &ble);
+    BLEMouse(BLE &ble = BLE::Instance());
 
     void click(uint8_t b = MOUSE_BUTTON_LEFT);
     void move(signed char x, signed char y, signed char wheel = 0);

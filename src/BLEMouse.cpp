@@ -1,4 +1,4 @@
-#include "mouse.h"
+#include "BLEMouse.h"
 
 uint8_t report[] = { 0, 0, 0, 0 };
 
@@ -9,6 +9,7 @@ BLEMouse::BLEMouse(BLE &ble) : HIDServiceBase(ble,
                        NULL,
                        NULL,
                        sizeof(inputReport)),
+                       HIDDevice(ble, ble::adv_data_appearance_t::MOUSE),
 _button(0)
 {
 }
@@ -26,8 +27,8 @@ void BLEMouse::move(signed char x, signed char y, signed char wheel) {
   mouseMove[1] = x;
   mouseMove[2] = y;
   mouseMove[3] = wheel;
-
-  this->send(mouseMove);
+  this->sendMap(MOUSE_REPORT_MAP, sizeof(MOUSE_REPORT_MAP));
+  this->send(mouseMove, sizeof(mouseMove));
 }
 
 void BLEMouse::press(uint8_t b) {
