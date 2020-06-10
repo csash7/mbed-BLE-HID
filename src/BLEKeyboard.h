@@ -186,8 +186,8 @@ const MediaKeyReport KEY_MEDIA_EMAIL_READER = {0, 128};
 /* */
 
 class BLEKeyboard : public HIDServiceBase, 
-                    public HIDDevice,
-					public arduino::Print{
+                    public arduino::Print,
+                    public HIDDevice{
     public:
     BLEKeyboard(BLE &_ble = BLE::Instance());
 
@@ -205,7 +205,6 @@ class BLEKeyboard : public HIDServiceBase,
 
 
     private:
-    void sendValue();
     void sendReport(KeyReport* keys);
     void sendReport(MediaKeyReport* keys);
 

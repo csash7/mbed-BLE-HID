@@ -35,7 +35,6 @@ HIDDevice::HIDDevice(BLE &ble, ble::adv_data_appearance_t appearance):
     device_name("Example"),
     manufacturersName("ARM"),
     _ble(ble),
-    _event_queue(event_queue),
     _battery_uuid(GattService::UUID_BATTERY_SERVICE),
     _battery_service(_ble, _battery_level),
     _handle(0),
@@ -110,10 +109,10 @@ HIDDevice::HIDDevice(BLE &ble, ble::adv_data_appearance_t appearance):
 {
 
     PnPID_t pnpID;
-    pnpID.vendorID_source = 0x2; // from the USB Implementer's Forum
-    pnpID.vendorID = 0x0D28; // NXP
-    pnpID.productID = 0x0204; // CMSIS-DAP (well, it's a keyboard but oh well)
-    pnpID.productVersion = 0x0100; // v1.0
+    pnpID.vendorID_source = 0x01; // from the USB Implementer's Forum
+    pnpID.vendorID = 0x02e5; // NXP
+    pnpID.productID = 0xabcd; // CMSIS-DAP (well, it's a keyboard but oh well)
+    pnpID.productVersion = 0x0110; // v1.0
     HIDDeviceInformationService deviceInfo(ble, manufacturersName, "m1", "abc", "def", "ghi", "jkl", &pnpID);
 
 }

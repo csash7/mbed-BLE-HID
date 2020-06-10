@@ -2,9 +2,9 @@
 #include "BLE_HID/HIDDevice.h"
 #include "BLE_HID/HIDServiceBase.h"
 
-#define MOUSE_BUTTON_LEFT    0x01
-#define MOUSE_BUTTON_RIGHT   0x02
-#define MOUSE_BUTTON_MIDDLE  0x04
+#define MOUSE_LEFT    0x01
+#define MOUSE_RIGHT   0x02
+#define MOUSE_MIDDLE  0x04
 
 report_map_t MOUSE_REPORT_MAP = {
     USAGE_PAGE(1),      0x01,         // Generic Desktop
@@ -42,11 +42,11 @@ class BLEMouse : public HIDServiceBase,
     public:
     BLEMouse(BLE &ble = BLE::Instance());
 
-    void click(uint8_t b = MOUSE_BUTTON_LEFT);
+    void click(uint8_t b = MOUSE_LEFT);
     void move(signed char x, signed char y, signed char wheel = 0);
-    void press(uint8_t b = MOUSE_BUTTON_LEFT);
-    void release(uint8_t b = MOUSE_BUTTON_LEFT);
-    bool isPressed(uint8_t b = MOUSE_BUTTON_LEFT);
+    void press(uint8_t b = MOUSE_LEFT);
+    void release(uint8_t b = MOUSE_LEFT);
+    bool isPressed(uint8_t b = MOUSE_LEFT);
 
     private:
     unsigned char _button;

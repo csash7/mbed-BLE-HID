@@ -291,34 +291,14 @@ void BLEKeyboard::releaseAll(void) {
 }
 
 
-
-void BLEKeyboard::sendValue() {
-    _value[0] = _keyReport.modifiers;
-    _value[1] = _keyReport.reserved;
-    _value[2] = _keyReport.keys[0];
-    _value[3] = _keyReport.keys[1];
-    _value[4] = _keyReport.keys[2];
-    _value[5] = _keyReport.keys[3];
-    _value[6] = _keyReport.keys[4];
-    _value[7] = _keyReport.keys[5];
-  this->sendMap(KEYBOARD_REPORT_MAP, sizeof(KEYBOARD_REPORT_MAP));
-  this->send(_value, sizeof(_value));
-}
-
 void BLEKeyboard::sendReport(KeyReport* keys)
 {
-  if (this->isConnected())
-  {
     this->sendMap(KEYBOARD_REPORT_MAP, sizeof(KEYBOARD_REPORT_MAP));
     this->send((uint8_t*)keys, sizeof(MediaKeyReport));
-  }
 }
 
 void BLEKeyboard::sendReport(MediaKeyReport* keys)
 {
-  if (this->isConnected())
-  {
     this->sendMap(KEYBOARD_REPORT_MAP, sizeof(KEYBOARD_REPORT_MAP));
     this->send((uint8_t*)keys, sizeof(MediaKeyReport));
-  }
 }

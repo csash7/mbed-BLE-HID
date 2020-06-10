@@ -6,7 +6,6 @@
 
 static events::EventQueue event_queue(/* event count */ 16 * EVENTS_EVENT_SIZE);
 
-
 class HIDDevice : public ble::Gap::EventHandler,
                  public SecurityManager::EventHandler
                  {
@@ -21,7 +20,6 @@ public:
     void setBatteryLevel(uint8_t _battery_level);
 
 private:
-
     events::EventQueue &_event_queue = event_queue;
     BLE &_ble;
     uint8_t _battery_level;
