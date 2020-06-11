@@ -294,7 +294,7 @@ void BLEKeyboard::releaseAll(void) {
 void BLEKeyboard::sendReport(KeyReport* keys)
 {
     this->sendMap(KEYBOARD_REPORT_MAP, sizeof(KEYBOARD_REPORT_MAP));
-    this->send((uint8_t*)keys, sizeof(MediaKeyReport));
+    this->send((uint8_t*)keys, sizeof(keys));
 }
 
 void BLEKeyboard::sendReport(MediaKeyReport* keys)

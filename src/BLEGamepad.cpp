@@ -1,8 +1,8 @@
 #include "BLEGamepad.h"
 
-static const uint8_t emptyInputReportData[] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+uint8_t emptyInputReportData[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-static const uint8_t _hidReportDescriptor[] = {
+report_map_t _hidReportDescriptor = {
   USAGE_PAGE(1),       0x01, // USAGE_PAGE (Generic Desktop)
   USAGE(1),            0x05, // USAGE (Gamepad)
   COLLECTION(1),       0x01, // COLLECTION (Application)
@@ -73,7 +73,7 @@ void BLEGamepad::setAxes(signed char x, signed char y, signed char z, signed cha
 {
   if (this->isConnected())
   {
-    uint8_t m[9];
+    unsigned char m[9];
     m[0] = _buttons;
     m[1] = (_buttons >> 8);
     m[2] = x;
@@ -85,7 +85,7 @@ void BLEGamepad::setAxes(signed char x, signed char y, signed char z, signed cha
     m[8] = hat;
     if (m[6] == (uint8_t) -128) { m[6] = -127; }
     if (m[7] == (uint8_t) -128) { m[7] = -127; }
-    //this->sendMap(_hidReportDescriptor, sizeof(_hidReportDescriptor));
+    this->sendMap(_hidReportDescriptor, sizeof(_hidReportDescriptor));
     this->send(m, sizeof(m));
   }
 }
