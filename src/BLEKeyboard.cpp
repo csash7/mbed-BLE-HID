@@ -1,5 +1,6 @@
 #include "BLEKeyboard.h"
 
+
 /// "keys pressed" report
 static uint8_t inputReportData[] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 /// "keys released" report
@@ -293,8 +294,16 @@ void BLEKeyboard::releaseAll(void) {
 
 void BLEKeyboard::sendReport(KeyReport* keys)
 {
+    inputReportData[0] = keys->modifiers;
+    inputReportData[1] = keys->reserved;
+    inputReportData[2] = keys->keys[0];
+    inputReportData[3] = keys->keys[1];
+    inputReportData[4] = keys->keys[2];
+    inputReportData[5] = keys->keys[3];
+    inputReportData[6] = keys->keys[4];
+    inputReportData[7] = keys->keys[5];
     this->sendMap(KEYBOARD_REPORT_MAP, sizeof(KEYBOARD_REPORT_MAP));
-    this->send((uint8_t*)keys, sizeof(keys));
+    this->send(inputReportData, sizeof(inputReportData));
 }
 
 void BLEKeyboard::sendReport(MediaKeyReport* keys)
